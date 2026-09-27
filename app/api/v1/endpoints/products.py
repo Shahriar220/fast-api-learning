@@ -1,6 +1,9 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
+from app.api.deps import get_current_user
+from app.models.user import User
+
 
 from app.core.database import get_db
 from app.crud.product import (
@@ -34,15 +37,14 @@ def read_product_by_id(product_id: int, db: Session = Depends(get_db)):
         )
     return db_product
 
-@router.post(
-    "/",
-    response_model=ProductResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Create a new product",
-)
-def create_new_product(product_in: ProductCreate, db: Session = Depends(get_db)):
-    """Create a new product record in the database."""
+@router.post("/", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
+def create_new_product(
+    product_in: ProductCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # <--- Protected!
+):
     return create_product(db, product_in=product_in)
+
 
 @router.patch("/{product_id}", response_model=ProductResponse, summary="Update product")
 def update_existing_product(

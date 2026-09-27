@@ -5,6 +5,12 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     DATABASE_URL: str = "postgresql+psycopg2://postgres:56643@localhost:5432/fastapi"
     DEBUG: bool = True
+    
+    # JWT Authentication
+    SECRET_KEY: str = "super-secret-key-change-this-in-production"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+
 
     model_config = SettingsConfigDict(
         env_file=".env",
